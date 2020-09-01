@@ -868,8 +868,12 @@ RCT_EXPORT_METHOD(paymentRequestWithApplePay:(NSArray *)items
         // move to the end of main queue
         // allow the execution of hiding modal
         // to be finished first
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [RCTPresentedViewController() presentViewController:paymentAuthorizationVC animated:YES completion:nil];
+        double delayInSeconds = 2.0;
+        dispatch_time_t popTime = dispatch_time(DISPATCH_TIME_NOW, (int64_t)(delayInSeconds * NSEC_PER_SEC));
+        dispatch_after(popTime, dispatch_get_main_queue(), ^(void){
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [RCTPresentedViewController() presentViewController:paymentAuthorizationVC animated:YES completion:nil];
+            });
         });
     } else {
         // There is a problem with your Apple Pay configuration.
